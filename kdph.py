@@ -49,6 +49,7 @@ try:
     import tarfile
     from pathlib import Path
     import urllib.request
+    import base64
     import cryptography
     import argon2
     from github import Github, Auth
@@ -206,8 +207,10 @@ def archive_folder(target_folder: str, output_archive: str):
 def extract_archive(archive_file: str, output_folder: str):
     extract_path = Path(output_folder)
     extract_path.mkdir(parents=True, exist_ok=True)
+    def filter_accept(tarinfo, path):
+        return tarinfo
     with tarfile.open(archive_file, "r:gz") as tar:
-        tar.extractall(path=extract_path)
+        tar.extractall(path=extract_path, filter=filter_accept)
 
 def github_upload(token, repo_name, target_file, commit_message="Uploaded file.", topics=None, desc=None):
     g = Github(auth=Auth.Token(token))
@@ -226,7 +229,6 @@ def github_upload(token, repo_name, target_file, commit_message="Uploaded file."
             content = f.read()
     except UnicodeDecodeError:
         with open(target_file, "rb") as f:
-            import base64
             content = base64.b64encode(f.read()).decode()
     try:
         existing_file = repo.get_contents(file_name)
@@ -237,8 +239,6 @@ def github_upload(token, repo_name, target_file, commit_message="Uploaded file."
 def github_download(author, repo, branch, target_file, binary=False):
     with urllib.request.urlopen(f"https://raw.githubusercontent.com/{author}/{repo}/{branch}/{target_file}") as response:
         file_data = response.read()
-    if binary:
-        import base64
         file_data = base64.b64decode(file_data)
     with open(target_file, "wb") as f:
         f.write(file_data)
