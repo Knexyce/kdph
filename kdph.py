@@ -209,8 +209,12 @@ def extract_archive(archive_file: str, output_folder: str):
     extract_path.mkdir(parents=True, exist_ok=True)
     def filter_accept(tarinfo, path):
         return tarinfo
-    with tarfile.open(archive_file, "r:gz") as tar:
-        tar.extractall(path=extract_path, filter=filter_accept)
+    try:
+        with tarfile.open(archive_file, "r:gz") as tar:
+            tar.extractall(path=extract_path, filter=filter_accept)
+    except:
+        with tarfile.open(archive_file, "r:gz") as tar:
+            tar.extractall(path=extract_path)
 
 def github_upload(token, repo_name, target_file, commit_message="Uploaded file.", topics=None, desc=None):
     g = Github(auth=Auth.Token(token))
