@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Optical Package Manager
+
+# More user friendly frontend for KDPH.
+# System level package manager with dependency resolution, package building, and configuring by using a configuration file ("optcfg.py") in packages.
+# Powered by KDPH engine and retains the same features.
+
+curl https://raw.githubusercontent.com/Knexyce/kdph/main/kdph.py -o /tmp/kdph.py
+python3 /tmp/kdph.py getpkg -a k-auto -p optical -l /tmp -k kp
+rm /tmp/kdph.py
+
+echo "Optical has been installed."
+echo "Try 'optic install cmdutil'."
+
+# Author: Ayan Alam (Knexyce).
+# All rights regarding this software are reserved by Knexyce only.
